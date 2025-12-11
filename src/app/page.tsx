@@ -24,6 +24,10 @@ export default function Home() {
     }
   };
 
+  const handleBuchungBearbeiten = (buchung: Buchung) => {
+    setBuchungen((prev) => prev.map((b) => b.id === buchung.id ? buchung : b));
+  };
+
   const verfuegbareJahre = [...new Set(buchungen.map(b => new Date(b.datum).getFullYear()))];
   if (!verfuegbareJahre.includes(selectedYear)) {
     verfuegbareJahre.push(selectedYear);
@@ -76,6 +80,7 @@ export default function Home() {
               <BuchungsUebersicht
                 buchungen={buchungen}
                 onBuchungLoeschen={handleBuchungLoeschen}
+                onBuchungBearbeiten={handleBuchungBearbeiten}
               />
             </div>
           </div>
