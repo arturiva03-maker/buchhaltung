@@ -1,16 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Buchung } from '@/types';
+import { Buchung, Anfangsbestand, Geldtransit } from '@/types';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import BuchungsFormular from '@/components/BuchungsFormular';
 import BuchungsUebersicht from '@/components/BuchungsUebersicht';
 import EinnahmenUeberschussRechnung from '@/components/EinnahmenUeberschussRechnung';
+import AnfangsbestandFormular from '@/components/AnfangsbestandFormular';
+import GeldtransitFormular from '@/components/GeldtransitFormular';
 
 type Tab = 'buchungen' | 'eur';
 
 export default function Home() {
   const [buchungen, setBuchungen] = useLocalStorage<Buchung[]>('buchungen', []);
+  const [anfangsbestand, setAnfangsbestand] = useLocalStorage<Anfangsbestand>('anfangsbestand', { bank: 0, kasse: 0 });
+  const [geldtransits, setGeldtransits] = useLocalStorage<Geldtransit[]>('geldtransits', []);
   const [activeTab, setActiveTab] = useState<Tab>('buchungen');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
@@ -26,6 +30,20 @@ export default function Home() {
 
   const handleBuchungBearbeiten = (buchung: Buchung) => {
     setBuchungen((prev) => prev.map((b) => b.id === buchung.id ? buchung : b));
+  };
+
+  const handleGeldtransitHinzufuegen = (geldtransit: Geldtransit) => {
+    setGeldtransits((prev) => [...prev, geldtransit]);
+  };
+
+  const handleGeldtransitLoeschen = (id: string) => {
+    if (confirm('Geldtransit wirklich löschen?')) {
+      setGeldtransits((prev) => prev.filter((g) => g.id !== id));
+    }
+  };
+
+  const handleGeldtransitBearbeiten = (geldtransit: Geldtransit) => {
+    setGeldtransits((prev) => prev.map((g) => g.id === geldtransit.id ? geldtransit : g));
   };
 
   const verfuegbareJahre = [...new Set(buchungen.map(b => new Date(b.datum).getFullYear()))];
@@ -74,13 +92,22 @@ export default function Home() {
         {activeTab === 'buchungen' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
+              <AnfangsbestandFormular
+                anfangsbestand={anfangsbestand}
+                onAnfangsbestandAendern={setAnfangsbestand}
+              />
+              <GeldtransitFormular onGeldtransitHinzufuegen={handleGeldtransitHinzufuegen} />
               <BuchungsFormular onBuchungHinzufuegen={handleBuchungHinzufuegen} />
             </div>
             <div className="lg:col-span-2">
               <BuchungsUebersicht
                 buchungen={buchungen}
+                anfangsbestand={anfangsbestand}
+                geldtransits={geldtransits}
                 onBuchungLoeschen={handleBuchungLoeschen}
                 onBuchungBearbeiten={handleBuchungBearbeiten}
+                onGeldtransitLoeschen={handleGeldtransitLoeschen}
+                onGeldtransitBearbeiten={handleGeldtransitBearbeiten}
               />
             </div>
           </div>

@@ -24,6 +24,21 @@ export interface Buchung {
   beschreibung: string;
 }
 
+export interface Anfangsbestand {
+  bank: number;
+  kasse: number;
+}
+
+export type GeldtransitRichtung = 'bank_zu_kasse' | 'kasse_zu_bank';
+
+export interface Geldtransit {
+  id: string;
+  datum: string;
+  richtung: GeldtransitRichtung;
+  betrag: number;
+  beschreibung: string;
+}
+
 export interface KontoInfo {
   id: BuchungsKonto;
   name: string;
