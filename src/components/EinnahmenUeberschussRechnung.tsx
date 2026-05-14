@@ -1,6 +1,15 @@
 'use client';
 
-import { Buchung, KONTEN } from '@/types';
+import { Buchung, BuchungsKonto, KONTEN } from '@/types';
+
+// Konten, die nicht in die EÜR einfließen — Privatbewegungen und
+// durchlaufende Posten sind erfolgsneutral.
+const NEUTRALE_KONTEN: BuchungsKonto[] = [
+  'privatentnahme',
+  'privateinlage',
+  'durchlaufende_posten_ein',
+  'durchlaufende_posten_aus',
+];
 
 interface EURProps {
   buchungen: Buchung[];
@@ -16,7 +25,9 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
   const jahresBuchungen = buchungen.filter(b => new Date(b.datum).getFullYear() === jahr);
 
   // Einnahmen berechnen
-  const einnahmenKonten = KONTEN.filter(k => k.typ === 'einnahme');
+  const einnahmenKonten = KONTEN.filter(
+    k => k.typ === 'einnahme' && !NEUTRALE_KONTEN.includes(k.id),
+  );
   const einnahmenSummen = einnahmenKonten.map(konto => {
     const summe = jahresBuchungen
       .filter(b => b.konto === konto.id && b.typ === 'einnahme')
@@ -26,7 +37,9 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
   const gesamtEinnahmen = einnahmenSummen.reduce((sum, e) => sum + e.summe, 0);
 
   // Ausgaben berechnen
-  const ausgabenKonten = KONTEN.filter(k => k.typ === 'ausgabe');
+  const ausgabenKonten = KONTEN.filter(
+    k => k.typ === 'ausgabe' && !NEUTRALE_KONTEN.includes(k.id),
+  );
   const ausgabenSummen = ausgabenKonten.map(konto => {
     const summe = jahresBuchungen
       .filter(b => b.konto === konto.id && b.typ === 'ausgabe')
