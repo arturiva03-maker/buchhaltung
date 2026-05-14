@@ -13,6 +13,7 @@ interface BuchungsUebersichtProps {
   onBuchungBearbeiten: (buchung: Buchung) => void;
   onGeldtransitLoeschen: (id: string) => void;
   onGeldtransitBearbeiten: (geldtransit: Geldtransit) => void;
+  buchhaltungName?: string;
 }
 
 type EintragTyp =
@@ -27,6 +28,7 @@ export default function BuchungsUebersicht({
   onBuchungBearbeiten,
   onGeldtransitLoeschen,
   onGeldtransitBearbeiten,
+  buchhaltungName,
 }: BuchungsUebersichtProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingType, setEditingType] = useState<'buchung' | 'geldtransit' | null>(null);
@@ -47,7 +49,11 @@ export default function BuchungsUebersicht({
   const exportiereCsv = () => {
     const csv = buchungenZuCsv(buchungen, geldtransits);
     const datum = new Date().toISOString().slice(0, 10);
-    downloadCsv(`buchhaltung-${datum}.csv`, csv);
+    const slug = (buchhaltungName ?? 'buchhaltung')
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'buchhaltung';
+    downloadCsv(`${slug}-${datum}.csv`, csv);
   };
 
   const formatBetrag = (betrag: number) => {

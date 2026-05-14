@@ -39,6 +39,15 @@ export interface Geldtransit {
   beschreibung: string;
 }
 
+export interface Buchhaltung {
+  id: string;
+  name: string;
+  buchungen: Buchung[];
+  anfangsbestand: Anfangsbestand;
+  geldtransits: Geldtransit[];
+  erstelltAm: string;
+}
+
 export interface KontoInfo {
   id: BuchungsKonto;
   nummer: string;
