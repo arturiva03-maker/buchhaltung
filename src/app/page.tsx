@@ -143,6 +143,17 @@ export default function Home() {
     }));
   };
 
+  const handleCsvImport = (
+    neueBuchungen: Buchung[],
+    neueGeldtransits: Geldtransit[],
+  ) => {
+    updateAktive((b) => ({
+      ...b,
+      buchungen: [...b.buchungen, ...neueBuchungen],
+      geldtransits: [...b.geldtransits, ...neueGeldtransits],
+    }));
+  };
+
   const neueBuchhaltung = (name: string) => {
     const neu = leereBuchhaltung(name);
     setBuchhaltungen((prev) => [...prev, neu]);
@@ -246,6 +257,7 @@ export default function Home() {
                 onBuchungBearbeiten={handleBuchungBearbeiten}
                 onGeldtransitLoeschen={handleGeldtransitLoeschen}
                 onGeldtransitBearbeiten={handleGeldtransitBearbeiten}
+                onCsvImport={handleCsvImport}
                 buchhaltungName={aktive.name}
               />
             </div>

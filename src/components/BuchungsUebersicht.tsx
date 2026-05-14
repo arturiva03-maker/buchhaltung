@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Buchung, BuchungsKonto, ZahlungsmittelKonto, BuchungsTyp, Anfangsbestand, Geldtransit, GeldtransitRichtung, KONTEN, ZAHLUNGSMITTEL } from '@/types';
 import DatumEingabe from './DatumEingabe';
-import { buchungenZuCsv, downloadCsv } from '@/lib/csvExport';
+import { buchungenZuCsv, csvZuBuchungen, downloadCsv } from '@/lib/csvExport';
 
 interface BuchungsUebersichtProps {
   buchungen: Buchung[];
@@ -13,6 +13,7 @@ interface BuchungsUebersichtProps {
   onBuchungBearbeiten: (buchung: Buchung) => void;
   onGeldtransitLoeschen: (id: string) => void;
   onGeldtransitBearbeiten: (geldtransit: Geldtransit) => void;
+  onCsvImport: (buchungen: Buchung[], geldtransits: Geldtransit[]) => void;
   buchhaltungName?: string;
 }
 
@@ -28,6 +29,7 @@ export default function BuchungsUebersicht({
   onBuchungBearbeiten,
   onGeldtransitLoeschen,
   onGeldtransitBearbeiten,
+  onCsvImport,
   buchhaltungName,
 }: BuchungsUebersichtProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -35,6 +37,7 @@ export default function BuchungsUebersicht({
   const [editBuchungForm, setEditBuchungForm] = useState<Buchung | null>(null);
   const [editGeldtransitForm, setEditGeldtransitForm] = useState<Geldtransit | null>(null);
   const [filter, setFilter] = useState<'alle' | ZahlungsmittelKonto>('alle');
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const getKonto = (kontoId: string) => KONTEN.find(k => k.id === kontoId);
   const getKontoName = (kontoId: string) => getKonto(kontoId)?.name || kontoId;
@@ -55,6 +58,21 @@ export default function BuchungsUebersicht({
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'buchhaltung';
     downloadCsv(`${slug}-${datum}.csv`, csv);
+  };
+
+  const importiereCsv = async (file: File) => {
+    const text = await file.text();
+    const result = csvZuBuchungen(text);
+    const ok = confirm(
+      `${result.buchungen.length} Buchungen und ${result.geldtransits.length} Geldtransits importieren?` +
+        (result.fehler.length
+          ? `\n\n${result.fehler.length} Zeile(n) übersprungen:\n${result.fehler.slice(0, 5).join('\n')}${result.fehler.length > 5 ? '\n…' : ''}`
+          : ''),
+    );
+    if (ok && (result.buchungen.length || result.geldtransits.length)) {
+      onCsvImport(result.buchungen, result.geldtransits);
+    }
+    if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
   const formatBetrag = (betrag: number) => {
@@ -161,13 +179,31 @@ export default function BuchungsUebersicht({
     <div className="bg-white p-6 rounded-lg shadow-md">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-gray-800">Buchungsübersicht</h2>
-        <button
-          onClick={exportiereCsv}
-          disabled={alleEintraege.length === 0}
-          className="px-4 py-2 text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
-        >
-          CSV-Export
-        </button>
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".csv,text/csv"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) importiereCsv(file);
+            }}
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+          >
+            CSV-Import
+          </button>
+          <button
+            onClick={exportiereCsv}
+            disabled={alleEintraege.length === 0}
+            className="px-4 py-2 text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+          >
+            CSV-Export
+          </button>
+        </div>
       </div>
 
       {/* Salden */}
