@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Buchung, BuchungsKonto, ZahlungsmittelKonto, BuchungsTyp, Anfangsbestand, Geldtransit, GeldtransitRichtung, KONTEN, ZAHLUNGSMITTEL } from '@/types';
 import DatumEingabe from './DatumEingabe';
+import { buchungenZuCsv, downloadCsv } from '@/lib/csvExport';
 
 interface BuchungsUebersichtProps {
   buchungen: Buchung[];
@@ -32,12 +33,21 @@ export default function BuchungsUebersicht({
   const [editBuchungForm, setEditBuchungForm] = useState<Buchung | null>(null);
   const [editGeldtransitForm, setEditGeldtransitForm] = useState<Geldtransit | null>(null);
 
-  const getKontoName = (kontoId: string) => {
-    return KONTEN.find(k => k.id === kontoId)?.name || kontoId;
-  };
+  const getKonto = (kontoId: string) => KONTEN.find(k => k.id === kontoId);
+  const getKontoName = (kontoId: string) => getKonto(kontoId)?.name || kontoId;
+  const getKontoNummer = (kontoId: string) => getKonto(kontoId)?.nummer || '';
 
-  const getZahlungsmittelName = (zmId: string) => {
-    return ZAHLUNGSMITTEL.find(zm => zm.id === zmId)?.name || zmId;
+  const getZahlungsmittel = (zmId: string) =>
+    ZAHLUNGSMITTEL.find(zm => zm.id === zmId);
+  const getZahlungsmittelName = (zmId: string) =>
+    getZahlungsmittel(zmId)?.name || zmId;
+  const getZahlungsmittelNummer = (zmId: string) =>
+    getZahlungsmittel(zmId)?.nummer || '';
+
+  const exportiereCsv = () => {
+    const csv = buchungenZuCsv(buchungen, geldtransits);
+    const datum = new Date().toISOString().slice(0, 10);
+    downloadCsv(`buchhaltung-${datum}.csv`, csv);
   };
 
   const formatBetrag = (betrag: number) => {
@@ -137,7 +147,16 @@ export default function BuchungsUebersicht({
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <h2 className="text-xl font-bold mb-4 text-gray-800">Buchungsübersicht</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-gray-800">Buchungsübersicht</h2>
+        <button
+          onClick={exportiereCsv}
+          disabled={alleEintraege.length === 0}
+          className="px-4 py-2 text-sm font-medium rounded-md bg-emerald-600 text-white hover:bg-emerald-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+        >
+          CSV-Export
+        </button>
+      </div>
 
       {/* Salden */}
       <div className="grid grid-cols-2 gap-4 mb-6">
@@ -211,7 +230,7 @@ export default function BuchungsUebersicht({
                               className="w-full px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
                             >
                               {verfuegbareKonten.map((k) => (
-                                <option key={k.id} value={k.id}>{k.name}</option>
+                                <option key={k.id} value={k.id}>{k.nummer} – {k.name}</option>
                               ))}
                             </select>
                           </div>
@@ -223,7 +242,7 @@ export default function BuchungsUebersicht({
                             className="w-full px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
                           >
                             {ZAHLUNGSMITTEL.map((zm) => (
-                              <option key={zm.id} value={zm.id}>{zm.name}</option>
+                              <option key={zm.id} value={zm.id}>{zm.nummer} – {zm.name}</option>
                             ))}
                           </select>
                         </td>
@@ -261,8 +280,14 @@ export default function BuchungsUebersicht({
                     <tr key={`buchung-${buchung.id}`} className="border-b border-gray-100 hover:bg-gray-50">
                       <td className="py-2 px-2 text-gray-800">{formatDatum(buchung.datum)}</td>
                       <td className="py-2 px-2 text-gray-800">{buchung.beschreibung}</td>
-                      <td className="py-2 px-2 text-gray-800">{getKontoName(buchung.konto)}</td>
-                      <td className="py-2 px-2 text-gray-800">{getZahlungsmittelName(buchung.zahlungsmittel)}</td>
+                      <td className="py-2 px-2 text-gray-800">
+                        <span className="font-mono text-xs text-gray-500 mr-1">{getKontoNummer(buchung.konto)}</span>
+                        {getKontoName(buchung.konto)}
+                      </td>
+                      <td className="py-2 px-2 text-gray-800">
+                        <span className="font-mono text-xs text-gray-500 mr-1">{getZahlungsmittelNummer(buchung.zahlungsmittel)}</span>
+                        {getZahlungsmittelName(buchung.zahlungsmittel)}
+                      </td>
                       <td className={`py-2 px-2 text-right font-medium ${
                         buchung.typ === 'einnahme' ? 'text-green-600' : 'text-red-600'
                       }`}>

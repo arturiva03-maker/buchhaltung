@@ -53,7 +53,10 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
           <tbody>
             {einnahmenSummen.map(({ konto, summe }) => (
               <tr key={konto.id} className={summe === 0 ? 'text-gray-400' : ''}>
-                <td className="py-1 text-gray-700">{konto.name}</td>
+                <td className="py-1 text-gray-700">
+                  <span className="font-mono text-xs text-gray-500 mr-2">{konto.nummer}</span>
+                  {konto.name}
+                </td>
                 <td className="py-1 text-right text-gray-800">{formatBetrag(summe)}</td>
               </tr>
             ))}
@@ -74,7 +77,10 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
           <tbody>
             {ausgabenSummen.map(({ konto, summe }) => (
               <tr key={konto.id} className={summe === 0 ? 'text-gray-400' : ''}>
-                <td className="py-1 text-gray-700">{konto.name}</td>
+                <td className="py-1 text-gray-700">
+                  <span className="font-mono text-xs text-gray-500 mr-2">{konto.nummer}</span>
+                  {konto.name}
+                </td>
                 <td className="py-1 text-right text-gray-800">{formatBetrag(summe)}</td>
               </tr>
             ))}

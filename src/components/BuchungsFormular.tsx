@@ -118,7 +118,7 @@ export default function BuchungsFormular({ onBuchungHinzufuegen }: BuchungsFormu
         >
           {ZAHLUNGSMITTEL.map((zm) => (
             <option key={zm.id} value={zm.id}>
-              {zm.name}
+              {zm.nummer} – {zm.name}
             </option>
           ))}
         </select>
@@ -137,7 +137,7 @@ export default function BuchungsFormular({ onBuchungHinzufuegen }: BuchungsFormu
         >
           {verfuegbareKonten.map((k) => (
             <option key={k.id} value={k.id}>
-              {k.name}
+              {k.nummer} – {k.name}
             </option>
           ))}
         </select>
