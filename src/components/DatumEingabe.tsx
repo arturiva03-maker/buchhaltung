@@ -1,7 +1,27 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Calendar } from 'lucide-react';
+
+function KalenderIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
 
 interface DatumEingabeProps {
   value: string;
@@ -177,7 +197,7 @@ export default function DatumEingabe({
           aria-label="Kalender öffnen"
           className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 text-gray-400 hover:text-blue-600 rounded"
         >
-          <Calendar className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
+          <KalenderIcon className={compact ? 'w-3.5 h-3.5' : 'w-4 h-4'} />
         </button>
         <input
           ref={dateRef}
