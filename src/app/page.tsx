@@ -27,14 +27,27 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Tab>('buchungen');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [initialisiert, setInitialisiert] = useState(false);
+  const [letzteSpeicherung, setLetzteSpeicherung] = useState<Date | null>(null);
 
-  // Erstinitialisierung + Migration alter localStorage-Daten
+  // Erstinitialisierung + Migration alter localStorage-Daten.
+  // Liest direkt aus localStorage, weil useLocalStorage erst nach Mount
+  // hydratisiert — sonst würden wir die gespeicherten Daten beim Reload
+  // mit einer leeren Buchhaltung überschreiben.
   useEffect(() => {
     if (typeof window === 'undefined') return;
     if (initialisiert) return;
-    if (buchhaltungen.length > 0) {
-      setInitialisiert(true);
-      return;
+
+    const vorhanden = window.localStorage.getItem('buchhaltungen');
+    if (vorhanden) {
+      try {
+        const parsed = JSON.parse(vorhanden) as Buchhaltung[];
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          setInitialisiert(true);
+          return;
+        }
+      } catch {
+        // beschädigt — wir migrieren bzw. legen neu an
+      }
     }
 
     try {
@@ -63,8 +76,14 @@ export default function Home() {
       setAktiveId(neu.id);
     }
     setInitialisiert(true);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [buchhaltungen.length, initialisiert]);
+  }, [initialisiert, setAktiveId, setBuchhaltungen]);
+
+  // Zeitstempel der letzten Speicherung — useLocalStorage schreibt bei jedem
+  // setBuchhaltungen direkt in localStorage, hier nur Anzeige.
+  useEffect(() => {
+    if (!initialisiert) return;
+    setLetzteSpeicherung(new Date());
+  }, [buchhaltungen, initialisiert]);
 
   // Aktive Buchhaltung sicherstellen, falls die gespeicherte ID nicht mehr existiert
   useEffect(() => {
@@ -256,8 +275,17 @@ export default function Home() {
       </main>
 
       <footer className="bg-gray-800 text-gray-400 py-4 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 text-center text-sm">
-          Buchhaltung · {buchhaltungen.length} {buchhaltungen.length === 1 ? 'Datei' : 'Dateien'} · Lokale Speicherung im Browser
+        <div className="max-w-7xl mx-auto px-4 text-center text-sm flex flex-wrap items-center justify-center gap-x-3 gap-y-1">
+          <span>
+            Buchhaltung · {buchhaltungen.length}{' '}
+            {buchhaltungen.length === 1 ? 'Datei' : 'Dateien'} · Lokale Speicherung im Browser
+          </span>
+          <span className="inline-flex items-center gap-1.5 text-emerald-400">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+            {letzteSpeicherung
+              ? `Automatisch gespeichert · ${letzteSpeicherung.toLocaleTimeString('de-DE')}`
+              : 'Automatische Speicherung aktiv'}
+          </span>
         </div>
       </footer>
     </div>
