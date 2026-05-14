@@ -11,7 +11,9 @@ export type BuchungsKonto =
   | 'aufmerksamkeiten'           // 4653 Aufmerksamkeiten
   | 'betriebsausstattung'        // 0410 Geschäftsausstattung
   | 'gwg'                        // 0480 Geringwertige Wirtschaftsgüter
-  | 'beitraege';                 // 4380 Beiträge
+  | 'beitraege'                  // 4380 Beiträge
+  | 'privatentnahme'             // 1800 Privatentnahmen
+  | 'privateinlage';             // 1890 Privateinlagen
 
 export type BuchungsTyp = 'einnahme' | 'ausgabe';
 
@@ -66,6 +68,8 @@ export const KONTEN: KontoInfo[] = [
   { id: 'betriebsausstattung',      nummer: '0410', name: 'Geschäftsausstattung', typ: 'ausgabe' },
   { id: 'gwg',                      nummer: '0480', name: 'Geringwertige Wirtschaftsgüter (GWG)', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
+  { id: 'privatentnahme',           nummer: '1800', name: 'Privatentnahmen', typ: 'ausgabe' },
+  { id: 'privateinlage',            nummer: '1890', name: 'Privateinlagen', typ: 'einnahme' },
 ];
 
 export const ZAHLUNGSMITTEL: { id: ZahlungsmittelKonto; nummer: string; name: string }[] = [
