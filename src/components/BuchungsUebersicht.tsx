@@ -34,6 +34,7 @@ export default function BuchungsUebersicht({
   const [editingType, setEditingType] = useState<'buchung' | 'geldtransit' | null>(null);
   const [editBuchungForm, setEditBuchungForm] = useState<Buchung | null>(null);
   const [editGeldtransitForm, setEditGeldtransitForm] = useState<Geldtransit | null>(null);
+  const [filter, setFilter] = useState<'alle' | ZahlungsmittelKonto>('alle');
 
   const getKonto = (kontoId: string) => KONTEN.find(k => k.id === kontoId);
   const getKontoName = (kontoId: string) => getKonto(kontoId)?.name || kontoId;
@@ -64,9 +65,14 @@ export default function BuchungsUebersicht({
     return new Date(datum).toLocaleDateString('de-DE');
   };
 
-  // Alle Einträge zusammenführen und nach Datum sortieren
+  // Filter: 'alle' zeigt alles, 'bank'/'kasse' zeigt nur Buchungen/Transits,
+  // die das gewählte Zahlungsmittel betreffen. Geldtransits betreffen
+  // immer beide Konten, daher in jedem Filter sichtbar.
+  const gefilterteBuchungen =
+    filter === 'alle' ? buchungen : buchungen.filter((b) => b.zahlungsmittel === filter);
+
   const alleEintraege: EintragTyp[] = [
-    ...buchungen.map(b => ({ art: 'buchung' as const, daten: b })),
+    ...gefilterteBuchungen.map(b => ({ art: 'buchung' as const, daten: b })),
     ...geldtransits.map(g => ({ art: 'geldtransit' as const, daten: g })),
   ].sort((a, b) => new Date(b.daten.datum).getTime() - new Date(a.daten.datum).getTime());
 
@@ -178,6 +184,28 @@ export default function BuchungsUebersicht({
             {formatBetrag(kasseSaldo)}
           </p>
         </div>
+      </div>
+
+      {/* Filter */}
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-sm text-gray-600 mr-1">Anzeigen:</span>
+        {([
+          ['alle', 'Alle'],
+          ['bank', 'Bank'],
+          ['kasse', 'Kasse'],
+        ] as const).map(([key, label]) => (
+          <button
+            key={key}
+            onClick={() => setFilter(key)}
+            className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+              filter === key
+                ? 'bg-blue-600 text-white border-blue-600'
+                : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
       </div>
 
       {/* Liste */}
