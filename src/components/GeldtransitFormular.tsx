@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Geldtransit, GeldtransitRichtung } from '@/types';
+import DatumEingabe from './DatumEingabe';
 
 interface GeldtransitFormularProps {
   onGeldtransitHinzufuegen: (geldtransit: Geldtransit) => void;
@@ -66,14 +67,7 @@ export default function GeldtransitFormular({ onGeldtransitHinzufuegen }: Geldtr
           <label htmlFor="transit-datum" className="block text-sm font-medium text-gray-700 mb-1">
             Datum
           </label>
-          <input
-            id="transit-datum"
-            type="date"
-            value={datum}
-            onChange={(e) => setDatum(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
-            required
-          />
+          <DatumEingabe id="transit-datum" value={datum} onChange={setDatum} required />
         </div>
 
         <div>

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Buchung, BuchungsKonto, ZahlungsmittelKonto, BuchungsTyp, Anfangsbestand, Geldtransit, GeldtransitRichtung, KONTEN, ZAHLUNGSMITTEL } from '@/types';
+import DatumEingabe from './DatumEingabe';
 
 interface BuchungsUebersichtProps {
   buchungen: Buchung[];
@@ -180,11 +181,10 @@ export default function BuchungsUebersicht({
                     return (
                       <tr key={`buchung-${buchung.id}`} className="border-b border-gray-100 bg-blue-50">
                         <td className="py-2 px-2">
-                          <input
-                            type="date"
+                          <DatumEingabe
                             value={editBuchungForm.datum}
-                            onChange={(e) => setEditBuchungForm({ ...editBuchungForm, datum: e.target.value })}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
+                            onChange={(iso) => setEditBuchungForm({ ...editBuchungForm, datum: iso })}
+                            compact
                           />
                         </td>
                         <td className="py-2 px-2">
@@ -295,11 +295,10 @@ export default function BuchungsUebersicht({
                     return (
                       <tr key={`transit-${transit.id}`} className="border-b border-gray-100 bg-purple-50">
                         <td className="py-2 px-2">
-                          <input
-                            type="date"
+                          <DatumEingabe
                             value={editGeldtransitForm.datum}
-                            onChange={(e) => setEditGeldtransitForm({ ...editGeldtransitForm, datum: e.target.value })}
-                            className="w-full px-2 py-1 border border-gray-300 rounded text-gray-900 text-sm"
+                            onChange={(iso) => setEditGeldtransitForm({ ...editGeldtransitForm, datum: iso })}
+                            compact
                           />
                         </td>
                         <td className="py-2 px-2">
