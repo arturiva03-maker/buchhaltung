@@ -230,12 +230,12 @@ export default function Home() {
         {activeTab === 'buchungen' ? (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div className="lg:col-span-1">
+              <BuchungsFormular onBuchungHinzufuegen={handleBuchungHinzufuegen} />
               <AnfangsbestandFormular
                 anfangsbestand={aktive.anfangsbestand}
                 onAnfangsbestandAendern={handleAnfangsbestandAendern}
               />
               <GeldtransitFormular onGeldtransitHinzufuegen={handleGeldtransitHinzufuegen} />
-              <BuchungsFormular onBuchungHinzufuegen={handleBuchungHinzufuegen} />
             </div>
             <div className="lg:col-span-2">
               <BuchungsUebersicht
