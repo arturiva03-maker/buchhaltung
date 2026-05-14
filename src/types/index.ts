@@ -12,6 +12,8 @@ export type BuchungsKonto =
   | 'betriebsausstattung'        // 0410 Geschäftsausstattung
   | 'gwg'                        // 0480 Geringwertige Wirtschaftsgüter
   | 'beitraege'                  // 4380 Beiträge
+  | 'telefon'                    // 4920 Telefon
+  | 'buerobedarf'                // 4930 Bürobedarf
   | 'abschluss_buchfuehrung'     // 4955 Abschluss- und Buchführungskosten
   | 'kosten_geldverkehr'         // 4970 Nebenkosten des Geldverkehrs
   | 'privatentnahme'             // 1800 Privatentnahmen
@@ -70,6 +72,8 @@ export const KONTEN: KontoInfo[] = [
   { id: 'betriebsausstattung',      nummer: '0410', name: 'Geschäftsausstattung', typ: 'ausgabe' },
   { id: 'gwg',                      nummer: '0480', name: 'Geringwertige Wirtschaftsgüter (GWG)', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
+  { id: 'telefon',                  nummer: '4920', name: 'Telefon', typ: 'ausgabe' },
+  { id: 'buerobedarf',              nummer: '4930', name: 'Bürobedarf', typ: 'ausgabe' },
   { id: 'abschluss_buchfuehrung',   nummer: '4955', name: 'Abschluss- und Buchführungskosten', typ: 'ausgabe' },
   { id: 'kosten_geldverkehr',       nummer: '4970', name: 'Nebenkosten des Geldverkehrs', typ: 'ausgabe' },
   { id: 'privatentnahme',           nummer: '1800', name: 'Privatentnahmen', typ: 'ausgabe' },
