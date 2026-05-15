@@ -14,6 +14,7 @@ export type BuchungsKonto =
   | 'durchlaufende_posten_ein'   // 1590 Durchlaufende Posten (Einnahme)
   | 'durchlaufende_posten_aus'   // 1590 Durchlaufende Posten (Ausgabe)
   | 'beitraege'                  // 4380 Beiträge
+  | 'versicherung'               // 4360 Versicherungen
   | 'telefon'                    // 4920 Telefon
   | 'buerobedarf'                // 4930 Bürobedarf
   | 'abschluss_buchfuehrung'     // 4955 Abschluss- und Buchführungskosten
@@ -76,6 +77,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'durchlaufende_posten_ein', nummer: '1590', name: 'Durchlaufende Posten', typ: 'einnahme' },
   { id: 'durchlaufende_posten_aus', nummer: '1590', name: 'Durchlaufende Posten', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
+  { id: 'versicherung',             nummer: '4360', name: 'Versicherungen', typ: 'ausgabe' },
   { id: 'telefon',                  nummer: '4920', name: 'Telefon', typ: 'ausgabe' },
   { id: 'buerobedarf',              nummer: '4930', name: 'Bürobedarf', typ: 'ausgabe' },
   { id: 'abschluss_buchfuehrung',   nummer: '4955', name: 'Abschluss- und Buchführungskosten', typ: 'ausgabe' },
