@@ -20,6 +20,7 @@ export type BuchungsKonto =
   | 'abschluss_buchfuehrung'     // 4955 Abschluss- und Buchführungskosten
   | 'kosten_geldverkehr'         // 4970 Nebenkosten des Geldverkehrs
   | 'privatentnahme'             // 1800 Privatentnahmen
+  | 'sonderausgaben'             // 1820 Sonderausgaben beschränkt abzugsfähig
   | 'privateinlage';             // 1890 Privateinlagen
 
 export type BuchungsTyp = 'einnahme' | 'ausgabe';
@@ -83,6 +84,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'abschluss_buchfuehrung',   nummer: '4955', name: 'Abschluss- und Buchführungskosten', typ: 'ausgabe' },
   { id: 'kosten_geldverkehr',       nummer: '4970', name: 'Nebenkosten des Geldverkehrs', typ: 'ausgabe' },
   { id: 'privatentnahme',           nummer: '1800', name: 'Privatentnahmen', typ: 'ausgabe' },
+  { id: 'sonderausgaben',           nummer: '1820', name: 'Sonderausgaben beschränkt abzugsfähig', typ: 'ausgabe' },
   { id: 'privateinlage',            nummer: '1890', name: 'Privateinlagen', typ: 'einnahme' },
 ];
 
