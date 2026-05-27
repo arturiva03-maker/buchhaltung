@@ -72,8 +72,21 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
     });
   };
 
-  const drucken = () => {
-    if (typeof window !== 'undefined') window.print();
+  // 'kompakt' druckt nur die Konten-Summen, 'detail' inkl. aller Unterbuchungen.
+  // Die Klasse am Root steuert per CSS, ob die collapsed Detailzeilen im
+  // Druckbild eingeblendet werden.
+  const drucken = (modus: 'kompakt' | 'detail') => {
+    if (typeof document === 'undefined') return;
+    const root = document.querySelector('.eur-print-root');
+    if (!root) return;
+    root.classList.add(modus === 'detail' ? 'print-detail' : 'print-kompakt');
+    const aufraeumen = () => {
+      root.classList.remove('print-detail');
+      root.classList.remove('print-kompakt');
+      window.removeEventListener('afterprint', aufraeumen);
+    };
+    window.addEventListener('afterprint', aufraeumen);
+    window.print();
   };
 
   const renderKontoZeilen = (
@@ -172,9 +185,13 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
           .no-print {
             display: none !important;
           }
-          /* Beim Drucken alle Detailzeilen einblenden, unabhängig vom Toggle */
-          .screen-collapsed {
+          /* Detail-Modus: alle Detailzeilen einblenden, unabhängig vom Toggle */
+          .eur-print-root.print-detail .screen-collapsed {
             display: table-row !important;
+          }
+          /* Kompakt-Modus: aufgeklappte Detailzeilen ebenfalls ausblenden */
+          .eur-print-root.print-kompakt .detail-row {
+            display: none !important;
           }
           .detail-row {
             background: #f9fafb !important;
@@ -204,10 +221,16 @@ export default function EinnahmenUeberschussRechnung({ buchungen, jahr }: EURPro
             Alle aufklappen/zuklappen
           </button>
           <button
-            onClick={drucken}
+            onClick={() => drucken('kompakt')}
             className="px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition-colors"
           >
-            Drucken
+            Drucken (Übersicht)
+          </button>
+          <button
+            onClick={() => drucken('detail')}
+            className="px-4 py-2 text-sm font-medium rounded-md bg-blue-700 text-white hover:bg-blue-800 transition-colors"
+          >
+            Drucken (mit Details)
           </button>
         </div>
       </div>
