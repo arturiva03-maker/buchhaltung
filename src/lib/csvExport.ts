@@ -1,10 +1,14 @@
 import {
+  Anfangsbestand,
   Buchung,
   Geldtransit,
   KONTEN,
   ZAHLUNGSMITTEL,
   GELDTRANSIT_KONTO,
 } from '@/types';
+
+// SKR03 9000 – Saldenvorträge, Sachkonten (Gegenkonto für Anfangsbestände)
+const SALDENVORTRAG_KONTO = { nummer: '9000', name: 'Saldenvorträge Sachkonten' };
 
 interface CsvZeile {
   datum: string;
@@ -15,7 +19,7 @@ interface CsvZeile {
   sollKontoName: string;
   habenKontoNr: string;
   habenKontoName: string;
-  typ: 'Einnahme' | 'Ausgabe' | 'Geldtransit';
+  typ: 'Einnahme' | 'Ausgabe' | 'Geldtransit' | 'Anfangsbestand';
 }
 
 const formatDatum = (iso: string) => {
@@ -104,16 +108,55 @@ function transitZuZeile(g: Geldtransit): CsvZeile {
   };
 }
 
+function anfangsbestandZuZeilen(anfangsbestand?: Anfangsbestand): CsvZeile[] {
+  if (!anfangsbestand) return [];
+  const zeilen: CsvZeile[] = [];
+  const bank = zahlungsmittelFuer('bank')!;
+  const kasse = zahlungsmittelFuer('kasse')!;
+  // Anfangsbestand datumslos — wir können beim Re-Import keinen Jahresanfang
+  // ableiten. Leeres Datum signalisiert Anfangsbestand.
+  if (anfangsbestand.bank !== 0) {
+    zeilen.push({
+      datum: '',
+      beleg: 'AB-BANK',
+      buchungstext: 'Anfangsbestand Bank',
+      betrag: anfangsbestand.bank,
+      sollKontoNr: bank.nummer,
+      sollKontoName: bank.name,
+      habenKontoNr: SALDENVORTRAG_KONTO.nummer,
+      habenKontoName: SALDENVORTRAG_KONTO.name,
+      typ: 'Anfangsbestand',
+    });
+  }
+  if (anfangsbestand.kasse !== 0) {
+    zeilen.push({
+      datum: '',
+      beleg: 'AB-KASSE',
+      buchungstext: 'Anfangsbestand Kasse',
+      betrag: anfangsbestand.kasse,
+      sollKontoNr: kasse.nummer,
+      sollKontoName: kasse.name,
+      habenKontoNr: SALDENVORTRAG_KONTO.nummer,
+      habenKontoName: SALDENVORTRAG_KONTO.name,
+      typ: 'Anfangsbestand',
+    });
+  }
+  return zeilen;
+}
+
 export function buchungenZuCsv(
   buchungen: Buchung[],
   geldtransits: Geldtransit[],
+  anfangsbestand?: Anfangsbestand,
 ): string {
-  const zeilen: CsvZeile[] = [
+  const anfangsZeilen = anfangsbestandZuZeilen(anfangsbestand);
+  const datenZeilen: CsvZeile[] = [
     ...buchungen.map(buchungZuZeile).filter((z): z is CsvZeile => z !== null),
     ...geldtransits.map(transitZuZeile),
   ].sort(
     (a, b) => new Date(a.datum).getTime() - new Date(b.datum).getTime(),
   );
+  const zeilen: CsvZeile[] = [...anfangsZeilen, ...datenZeilen];
 
   const header = [
     'Datum',
@@ -164,6 +207,7 @@ export function downloadCsv(filename: string, csv: string) {
 export interface CsvImportResult {
   buchungen: Buchung[];
   geldtransits: Geldtransit[];
+  anfangsbestand: Anfangsbestand | null;
   fehler: string[];
 }
 
@@ -217,13 +261,14 @@ export function csvZuBuchungen(csv: string): CsvImportResult {
   const fehler: string[] = [];
   const buchungen: Buchung[] = [];
   const geldtransits: Geldtransit[] = [];
+  let anfangsbestand: Anfangsbestand | null = null;
 
   // BOM entfernen, Zeilen splitten, leere Zeilen ignorieren
   const text = csv.replace(/^\uFEFF/, '');
   const zeilen = text.split(/\r?\n/).filter((z) => z.trim().length > 0);
   if (zeilen.length < 2) {
     fehler.push('CSV enthält keine Datenzeilen.');
-    return { buchungen, geldtransits, fehler };
+    return { buchungen, geldtransits, anfangsbestand, fehler };
   }
 
   // Erste Zeile = Header — wir akzeptieren die Spalten-Reihenfolge unseres Exports
@@ -236,8 +281,30 @@ export function csvZuBuchungen(csv: string): CsvImportResult {
     const [datumStr, , buchungstext, betragStr, sollNr, , habenNr, , typStr] =
       felder;
 
-    const datum = parseDatum(datumStr);
     const betrag = parseBetrag(betragStr);
+    const typ = typStr.trim();
+
+    // Anfangsbestand vor allgemeiner Datums-/Betragsprüfung behandeln,
+    // weil Anfangsbestände kein Datum tragen und negativ sein dürfen.
+    if (typ === 'Anfangsbestand') {
+      if (betrag === null) {
+        fehler.push(`Zeile ${i + 1}: ungültiger Betrag "${betragStr}".`);
+        continue;
+      }
+      const bankNr = zahlungsmittelFuerNummer('1200')?.nummer;
+      const kasseNr = zahlungsmittelFuerNummer('1000')?.nummer;
+      if (!anfangsbestand) anfangsbestand = { bank: 0, kasse: 0 };
+      if (sollNr === bankNr) anfangsbestand.bank = betrag;
+      else if (sollNr === kasseNr) anfangsbestand.kasse = betrag;
+      else {
+        fehler.push(
+          `Zeile ${i + 1}: Anfangsbestand-Konto nicht erkannt (Soll ${sollNr}).`,
+        );
+      }
+      continue;
+    }
+
+    const datum = parseDatum(datumStr);
     if (!datum) {
       fehler.push(`Zeile ${i + 1}: ungültiges Datum "${datumStr}".`);
       continue;
@@ -246,8 +313,6 @@ export function csvZuBuchungen(csv: string): CsvImportResult {
       fehler.push(`Zeile ${i + 1}: ungültiger Betrag "${betragStr}".`);
       continue;
     }
-
-    const typ = typStr.trim();
 
     if (typ === 'Geldtransit') {
       const bankNr = zahlungsmittelFuerNummer('1200')?.nummer;
@@ -325,5 +390,5 @@ export function csvZuBuchungen(csv: string): CsvImportResult {
     fehler.push(`Zeile ${i + 1}: unbekannter Typ "${typ}".`);
   }
 
-  return { buchungen, geldtransits, fehler };
+  return { buchungen, geldtransits, anfangsbestand, fehler };
 }

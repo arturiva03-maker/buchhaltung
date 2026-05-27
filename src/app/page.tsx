@@ -146,11 +146,13 @@ export default function Home() {
   const handleCsvImport = (
     neueBuchungen: Buchung[],
     neueGeldtransits: Geldtransit[],
+    neuerAnfangsbestand: Anfangsbestand | null,
   ) => {
     updateAktive((b) => ({
       ...b,
       buchungen: [...b.buchungen, ...neueBuchungen],
       geldtransits: [...b.geldtransits, ...neueGeldtransits],
+      anfangsbestand: neuerAnfangsbestand ?? b.anfangsbestand,
     }));
   };
 

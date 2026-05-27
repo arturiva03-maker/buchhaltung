@@ -13,7 +13,11 @@ interface BuchungsUebersichtProps {
   onBuchungBearbeiten: (buchung: Buchung) => void;
   onGeldtransitLoeschen: (id: string) => void;
   onGeldtransitBearbeiten: (geldtransit: Geldtransit) => void;
-  onCsvImport: (buchungen: Buchung[], geldtransits: Geldtransit[]) => void;
+  onCsvImport: (
+    buchungen: Buchung[],
+    geldtransits: Geldtransit[],
+    anfangsbestand: Anfangsbestand | null,
+  ) => void;
   buchhaltungName?: string;
 }
 
@@ -51,7 +55,7 @@ export default function BuchungsUebersicht({
     getZahlungsmittel(zmId)?.nummer || '';
 
   const exportiereCsv = () => {
-    const csv = buchungenZuCsv(buchungen, geldtransits);
+    const csv = buchungenZuCsv(buchungen, geldtransits, anfangsbestand);
     const datum = new Date().toISOString().slice(0, 10);
     const slug = (buchhaltungName ?? 'buchhaltung')
       .toLowerCase()
@@ -63,14 +67,22 @@ export default function BuchungsUebersicht({
   const importiereCsv = async (file: File) => {
     const text = await file.text();
     const result = csvZuBuchungen(text);
+    const anfangsbestandText = result.anfangsbestand
+      ? `\nAnfangsbestand: Bank ${formatBetrag(result.anfangsbestand.bank)}, Kasse ${formatBetrag(result.anfangsbestand.kasse)}`
+      : '';
     const ok = confirm(
-      `${result.buchungen.length} Buchungen und ${result.geldtransits.length} Geldtransits importieren?` +
+      `${result.buchungen.length} Buchungen und ${result.geldtransits.length} Geldtransits importieren?${anfangsbestandText}` +
         (result.fehler.length
           ? `\n\n${result.fehler.length} Zeile(n) übersprungen:\n${result.fehler.slice(0, 5).join('\n')}${result.fehler.length > 5 ? '\n…' : ''}`
           : ''),
     );
-    if (ok && (result.buchungen.length || result.geldtransits.length)) {
-      onCsvImport(result.buchungen, result.geldtransits);
+    if (
+      ok &&
+      (result.buchungen.length ||
+        result.geldtransits.length ||
+        result.anfangsbestand)
+    ) {
+      onCsvImport(result.buchungen, result.geldtransits, result.anfangsbestand);
     }
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
