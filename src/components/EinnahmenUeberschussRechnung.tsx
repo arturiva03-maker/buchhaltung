@@ -11,6 +11,8 @@ const NEUTRALE_KONTEN: BuchungsKonto[] = [
   'privateinlage',
   'durchlaufende_posten_ein',
   'durchlaufende_posten_aus',
+  'verrechnung_eur_ein',
+  'verrechnung_eur_aus',
 ];
 
 interface EURProps {

@@ -14,6 +14,8 @@ export type BuchungsKonto =
   | 'gwg'                        // 0480 Geringwertige Wirtschaftsgüter
   | 'durchlaufende_posten_ein'   // 1590 Durchlaufende Posten (Einnahme)
   | 'durchlaufende_posten_aus'   // 1590 Durchlaufende Posten (Ausgabe)
+  | 'verrechnung_eur_ein'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Einnahme)
+  | 'verrechnung_eur_aus'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Ausgabe)
   | 'beitraege'                  // 4380 Beiträge
   | 'versicherung'               // 4360 Versicherungen
   | 'verkaufsprovision'          // 4760 Verkaufsprovisionen
@@ -82,6 +84,8 @@ export const KONTEN: KontoInfo[] = [
   { id: 'gwg',                      nummer: '0480', name: 'Geringwertige Wirtschaftsgüter (GWG)', typ: 'ausgabe' },
   { id: 'durchlaufende_posten_ein', nummer: '1590', name: 'Durchlaufende Posten', typ: 'einnahme' },
   { id: 'durchlaufende_posten_aus', nummer: '1590', name: 'Durchlaufende Posten', typ: 'ausgabe' },
+  { id: 'verrechnung_eur_ein',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'einnahme' },
+  { id: 'verrechnung_eur_aus',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
   { id: 'versicherung',             nummer: '4360', name: 'Versicherungen', typ: 'ausgabe' },
   { id: 'verkaufsprovision',        nummer: '4760', name: 'Verkaufsprovisionen', typ: 'ausgabe' },
