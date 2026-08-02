@@ -8,6 +8,7 @@ export type BuchungsKonto =
   | 'strom_gas'                  // 4240 Gas, Strom, Wasser
   | 'sonstiger_betriebsbedarf'   // 4980 Betriebsbedarf
   | 'ware'                       // 3200 Wareneingang
+  | 'ig_erwerb_19'               // 3425 Innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer
   | 'aufmerksamkeiten'           // 4653 Aufmerksamkeiten
   | 'betriebsausstattung'        // 0410 Geschäftsausstattung
   | 'gwg'                        // 0480 Geringwertige Wirtschaftsgüter
@@ -75,6 +76,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'strom_gas',                nummer: '4240', name: 'Gas, Strom, Wasser', typ: 'ausgabe' },
   { id: 'sonstiger_betriebsbedarf', nummer: '4980', name: 'Betriebsbedarf', typ: 'ausgabe' },
   { id: 'ware',                     nummer: '3200', name: 'Wareneingang', typ: 'ausgabe' },
+  { id: 'ig_erwerb_19',             nummer: '3425', name: 'Innergemeinschaftlicher Erwerb 19 %', typ: 'ausgabe' },
   { id: 'aufmerksamkeiten',         nummer: '4653', name: 'Aufmerksamkeiten', typ: 'ausgabe' },
   { id: 'betriebsausstattung',      nummer: '0410', name: 'Geschäftsausstattung', typ: 'ausgabe' },
   { id: 'gwg',                      nummer: '0480', name: 'Geringwertige Wirtschaftsgüter (GWG)', typ: 'ausgabe' },
