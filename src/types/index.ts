@@ -15,9 +15,11 @@ export type BuchungsKonto =
   | 'durchlaufende_posten_aus'   // 1590 Durchlaufende Posten (Ausgabe)
   | 'beitraege'                  // 4380 Beiträge
   | 'versicherung'               // 4360 Versicherungen
+  | 'porto'                      // 4910 Porto
   | 'telefon'                    // 4920 Telefon
   | 'buerobedarf'                // 4930 Bürobedarf
   | 'abschluss_buchfuehrung'     // 4955 Abschluss- und Buchführungskosten
+  | 'lizenzen'                   // 4964 Aufwendungen für die zeitlich befristete Überlassung von Rechten (Lizenzen, Konzessionen)
   | 'kosten_geldverkehr'         // 4970 Nebenkosten des Geldverkehrs
   | 'privatentnahme'             // 1800 Privatentnahmen
   | 'sonderausgaben'             // 1820 Sonderausgaben beschränkt abzugsfähig
@@ -79,9 +81,11 @@ export const KONTEN: KontoInfo[] = [
   { id: 'durchlaufende_posten_aus', nummer: '1590', name: 'Durchlaufende Posten', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
   { id: 'versicherung',             nummer: '4360', name: 'Versicherungen', typ: 'ausgabe' },
+  { id: 'porto',                    nummer: '4910', name: 'Porto', typ: 'ausgabe' },
   { id: 'telefon',                  nummer: '4920', name: 'Telefon', typ: 'ausgabe' },
   { id: 'buerobedarf',              nummer: '4930', name: 'Bürobedarf', typ: 'ausgabe' },
   { id: 'abschluss_buchfuehrung',   nummer: '4955', name: 'Abschluss- und Buchführungskosten', typ: 'ausgabe' },
+  { id: 'lizenzen',                 nummer: '4964', name: 'Lizenzen und Konzessionen', typ: 'ausgabe' },
   { id: 'kosten_geldverkehr',       nummer: '4970', name: 'Nebenkosten des Geldverkehrs', typ: 'ausgabe' },
   { id: 'privatentnahme',           nummer: '1800', name: 'Privatentnahmen', typ: 'ausgabe' },
   { id: 'sonderausgaben',           nummer: '1820', name: 'Sonderausgaben beschränkt abzugsfähig', typ: 'ausgabe' },
