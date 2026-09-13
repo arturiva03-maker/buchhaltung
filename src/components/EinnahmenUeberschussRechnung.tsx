@@ -7,6 +7,7 @@ import { Buchung, BuchungsKonto, KONTEN, ZAHLUNGSMITTEL } from '@/types';
 // durchlaufende Posten sind erfolgsneutral.
 const NEUTRALE_KONTEN: BuchungsKonto[] = [
   'privatentnahme',
+  'privatsteuern',
   'sonderausgaben',
   'privateinlage',
   'durchlaufende_posten_ein',

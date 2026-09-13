@@ -9,6 +9,7 @@ export type BuchungsKonto =
   | 'sonstiger_betriebsbedarf'   // 4980 Betriebsbedarf
   | 'ware'                       // 3200 Wareneingang
   | 'ig_erwerb_19'               // 3425 Innergemeinschaftlicher Erwerb 19 % Vorsteuer und 19 % Umsatzsteuer
+  | 'ig_erwerb_ohne_vst_19'      // 3435 Innergemeinschaftlicher Erwerb ohne Vorsteuerabzug 19 % Umsatzsteuer
   | 'aufmerksamkeiten'           // 4653 Aufmerksamkeiten
   | 'betriebsausstattung'        // 0410 Geschäftsausstattung
   | 'gwg'                        // 0480 Geringwertige Wirtschaftsgüter
@@ -16,6 +17,7 @@ export type BuchungsKonto =
   | 'durchlaufende_posten_aus'   // 1590 Durchlaufende Posten (Ausgabe)
   | 'verrechnung_eur_ein'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Einnahme)
   | 'verrechnung_eur_aus'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Ausgabe)
+  | 'ust_vorauszahlungen'        // 1780 Umsatzsteuer-Vorauszahlungen (z. B. Erwerbsteuer; ohne Vorsteuerabzug ergebniswirksam)
   | 'beitraege'                  // 4380 Beiträge
   | 'versicherung'               // 4360 Versicherungen
   | 'verkaufsprovision'          // 4760 Verkaufsprovisionen
@@ -26,6 +28,7 @@ export type BuchungsKonto =
   | 'lizenzen'                   // 4964 Aufwendungen für die zeitlich befristete Überlassung von Rechten (Lizenzen, Konzessionen)
   | 'kosten_geldverkehr'         // 4970 Nebenkosten des Geldverkehrs
   | 'privatentnahme'             // 1800 Privatentnahmen
+  | 'privatsteuern'              // 1810 Privatsteuern
   | 'sonderausgaben'             // 1820 Sonderausgaben beschränkt abzugsfähig
   | 'privateinlage';             // 1890 Privateinlagen
 
@@ -79,6 +82,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'sonstiger_betriebsbedarf', nummer: '4980', name: 'Betriebsbedarf', typ: 'ausgabe' },
   { id: 'ware',                     nummer: '3200', name: 'Wareneingang', typ: 'ausgabe' },
   { id: 'ig_erwerb_19',             nummer: '3425', name: 'Innergemeinschaftlicher Erwerb 19 %', typ: 'ausgabe' },
+  { id: 'ig_erwerb_ohne_vst_19',    nummer: '3435', name: 'Innergemeinschaftlicher Erwerb ohne Vorsteuerabzug 19 %', typ: 'ausgabe' },
   { id: 'aufmerksamkeiten',         nummer: '4653', name: 'Aufmerksamkeiten', typ: 'ausgabe' },
   { id: 'betriebsausstattung',      nummer: '0410', name: 'Geschäftsausstattung', typ: 'ausgabe' },
   { id: 'gwg',                      nummer: '0480', name: 'Geringwertige Wirtschaftsgüter (GWG)', typ: 'ausgabe' },
@@ -86,6 +90,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'durchlaufende_posten_aus', nummer: '1590', name: 'Durchlaufende Posten', typ: 'ausgabe' },
   { id: 'verrechnung_eur_ein',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'einnahme' },
   { id: 'verrechnung_eur_aus',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'ausgabe' },
+  { id: 'ust_vorauszahlungen',      nummer: '1780', name: 'Umsatzsteuer-Vorauszahlungen', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
   { id: 'versicherung',             nummer: '4360', name: 'Versicherungen', typ: 'ausgabe' },
   { id: 'verkaufsprovision',        nummer: '4760', name: 'Verkaufsprovisionen', typ: 'ausgabe' },
@@ -96,6 +101,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'lizenzen',                 nummer: '4964', name: 'Lizenzen und Konzessionen', typ: 'ausgabe' },
   { id: 'kosten_geldverkehr',       nummer: '4970', name: 'Nebenkosten des Geldverkehrs', typ: 'ausgabe' },
   { id: 'privatentnahme',           nummer: '1800', name: 'Privatentnahmen', typ: 'ausgabe' },
+  { id: 'privatsteuern',            nummer: '1810', name: 'Privatsteuern', typ: 'ausgabe' },
   { id: 'sonderausgaben',           nummer: '1820', name: 'Sonderausgaben beschränkt abzugsfähig', typ: 'ausgabe' },
   { id: 'privateinlage',            nummer: '1890', name: 'Privateinlagen', typ: 'einnahme' },
 ];
