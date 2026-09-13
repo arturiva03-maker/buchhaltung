@@ -18,6 +18,7 @@ export type BuchungsKonto =
   | 'verrechnung_eur_ein'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Einnahme)
   | 'verrechnung_eur_aus'        // 1371 Verrechnungskonto Gewinnermittlung § 4 Abs. 3 EStG, nicht ergebniswirksam (Ausgabe)
   | 'ust_vorauszahlungen'        // 1780 Umsatzsteuer-Vorauszahlungen (z. B. Erwerbsteuer; ohne Vorsteuerabzug ergebniswirksam)
+  | 'ust_vorjahr'                // 1790 Umsatzsteuer Vorjahr (Nachzahlung für ein abgelaufenes Jahr, ergebniswirksam im Zahlungsjahr)
   | 'beitraege'                  // 4380 Beiträge
   | 'versicherung'               // 4360 Versicherungen
   | 'verkaufsprovision'          // 4760 Verkaufsprovisionen
@@ -91,6 +92,7 @@ export const KONTEN: KontoInfo[] = [
   { id: 'verrechnung_eur_ein',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'einnahme' },
   { id: 'verrechnung_eur_aus',      nummer: '1371', name: 'Verrechnungskonto (nicht ergebniswirksam)', typ: 'ausgabe' },
   { id: 'ust_vorauszahlungen',      nummer: '1780', name: 'Umsatzsteuer-Vorauszahlungen', typ: 'ausgabe' },
+  { id: 'ust_vorjahr',              nummer: '1790', name: 'Umsatzsteuer Vorjahr', typ: 'ausgabe' },
   { id: 'beitraege',                nummer: '4380', name: 'Beiträge', typ: 'ausgabe' },
   { id: 'versicherung',             nummer: '4360', name: 'Versicherungen', typ: 'ausgabe' },
   { id: 'verkaufsprovision',        nummer: '4760', name: 'Verkaufsprovisionen', typ: 'ausgabe' },
